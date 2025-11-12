@@ -1,6 +1,15 @@
 #include <lvgl.h>
 #include "Guition_480x480_driver.h"
 
+
+
+static LGFX gfx; /*Use the default LovyanGFX display class instance*/
+
+void my_driver_init(void)
+{
+    gfx.init();
+}
+
 //Flush callback
 void my_disp_flush(lv_display_t *disp, const lv_area_t *area, uint8_t *px_map) {
     //Serial.println("Flush called");
