@@ -1,13 +1,34 @@
 #include <lvgl.h>
 #include "Guition_480x480_driver.h"
+#include "background_image.h"
 
 
 
 static LGFX gfx; /*Use the default LovyanGFX display class instance*/
 
-void my_driver_init(void)
+//LVGL display buffer
+static lv_color_t buf1[screenWidth * 10];
+static lv_draw_buf_t draw_buf1[screenWidth * 10]; //
+
+void my_lv_and_driver_init(void)
 {
     gfx.init();
+    lv_init();
+    
+    lv_display_t *disp = lv_display_create( screenWidth, screenHeight);
+    lv_display_set_flush_cb(disp,my_disp_flush);
+    lv_display_set_buffers(disp, &draw_buf1, NULL, sizeof(draw_buf1), LV_DISPLAY_RENDER_MODE_PARTIAL);
+
+    lv_obj_t * screen = lv_scr_act();
+    lv_obj_t * img = lv_img_create(screen);
+    lv_img_set_src(img, &background_image);
+    //lv_img_set_src(img, &lysbryter_paa);
+    Serial.println("Display created and flush cb set");
+
+    // Set innput device
+    static lv_indev_t * indev_touchpad = lv_indev_create();
+    lv_indev_set_type(indev_touchpad, LV_INDEV_TYPE_POINTER);
+    lv_indev_set_read_cb(indev_touchpad, my_touchpad_read);
 }
 
 //Flush callback

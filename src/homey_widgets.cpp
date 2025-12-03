@@ -1,12 +1,16 @@
 #include <lvgl.h>
 #include "homey_widgets.h"
+#include "background_image.h"
+
 
 
 
 // Styles
 static lv_style_t style_btn;
 static lv_style_t style_button_pressed;
-static lv_style_t style_button_red;
+lv_style_t style_button_red;
+static lv_style_t my_btn_style;
+static lv_style_t style_def;
 
 //
 static lv_color_t darken(const lv_color_filter_dsc_t * dsc, lv_color_t color, lv_opa_t opa)
@@ -47,13 +51,22 @@ void homey_styles_init(void)
     lv_style_init(&style_button_red);
     lv_style_set_bg_color(&style_button_red, lv_palette_main(LV_PALETTE_RED));
     lv_style_set_bg_grad_color(&style_button_red, lv_palette_lighten(LV_PALETTE_RED, 3));
+
+
+
+    lv_style_init(&style_def);
+    lv_style_set_text_color(&style_def, lv_color_white());
+    //lv_style_set_transition(&style_def, &tr);
 }
 
 
-lv_obj_t * homey_button_create(lv_obj_t * parent, char * text, lv_obj_flag_t flags = DEFAULT_LV_OBJ_FLAG , uint16_t height = -1, uint16_t width = -1)
+lv_obj_t * homey_button_create(lv_obj_t * parent, const char * text, lv_obj_flag_t flags = DEFAULT_LV_OBJ_FLAG , uint16_t height = -1, uint16_t width = -1)
 {
     lv_obj_t * btn = lv_button_create(parent);
     if ( flags != DEFAULT_LV_OBJ_FLAG )  lv_obj_add_flag(btn, flags);
+
+
+    /*
     if ( height != -1 && width != -1 )
     if ( text != NULL )  {
         lv_obj_set_size(btn, width, height);
@@ -61,7 +74,85 @@ lv_obj_t * homey_button_create(lv_obj_t * parent, char * text, lv_obj_flag_t fla
         lv_label_set_text(label, text);
         lv_obj_center(label);
     }
-    lv_obj_add_style(btn, &style_btn, 0);
+    */
+    lv_obj_add_style(btn, &my_btn_style, LV_PART_MAIN);
+    lv_obj_set_size(btn,100,100);
 
     return btn;
+}
+
+
+void homey_light_switch_event_cb(lv_event_t * e)
+{
+    lv_obj_t * obj = (lv_obj_t*) lv_event_get_target(e);
+    lv_event_code_t code = lv_event_get_code(e);
+    uint16_t * btn_size = (uint16_t *) lv_obj_get_user_data(obj);
+ 
+    if( lv_obj_has_state(obj, LV_STATE_CHECKED) ) {
+        if ( *btn_size == 100 ) {
+            lv_imgbtn_set_src(obj, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &lysbryter_paa_100x100, NULL);
+        } else if ( *btn_size == 150 ) {
+            lv_imgbtn_set_src(obj, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &lysbryter_paa_150x150, NULL);    
+        } else if ( *btn_size == 400 ) {
+            lv_imgbtn_set_src(obj, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &lysbryter_paa_400x400, NULL);
+        } else {
+            lv_imgbtn_set_src(obj, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &lysbryter_paa_200x200, NULL);
+        }
+    } else {
+        if ( *btn_size == 100 ) {
+            lv_imgbtn_set_src(obj, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &lysbryter_av_100x100, NULL);
+        } else if ( *btn_size == 150 ) {
+            lv_imgbtn_set_src(obj, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &lysbryter_av_150x150, NULL);    
+        } else if ( *btn_size == 400 ) {
+            lv_imgbtn_set_src(obj, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &lysbryter_av_400x400, NULL);
+        } else {
+            lv_imgbtn_set_src(obj, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &lysbryter_av_200x200, NULL);
+        }       
+    }
+}
+
+static uint16_t button_size_100 = 100;
+static uint16_t button_size_150 = 150;
+static uint16_t button_size_200 = 200;
+static uint16_t button_size_400 = 400;
+
+
+lv_obj_t *  homey_light_switch(lv_obj_t * parent, const char * text, lv_obj_flag_t flags = DEFAULT_LV_OBJ_FLAG , uint16_t size = 200)
+{
+    /* Supporting 4 sizes:  100x100, 150x150, 200x200, 400x400 */ 
+
+
+    lv_obj_t * imgbtn = lv_imgbtn_create(parent);
+    lv_obj_add_flag(imgbtn, LV_OBJ_FLAG_CHECKABLE);
+    if ( size == 400 ) {
+        lv_imgbtn_set_src(imgbtn, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &lysbryter_paa_400x400, NULL);
+        lv_imgbtn_set_src(imgbtn, LV_IMAGEBUTTON_STATE_PRESSED, NULL, &lysbryter_av_400x400 , NULL);
+        lv_obj_set_user_data(imgbtn, &button_size_400);
+    }       
+    else if ( size == 100 ) {
+        lv_imgbtn_set_src(imgbtn, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &lysbryter_paa_100x100, NULL);
+        lv_imgbtn_set_src(imgbtn, LV_IMAGEBUTTON_STATE_PRESSED, NULL, &lysbryter_av_100x100 , NULL);
+        lv_obj_set_user_data(imgbtn, &button_size_100);
+    } else if ( size == 150 ) {
+        lv_imgbtn_set_src(imgbtn, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &lysbryter_paa_150x150, NULL);
+        lv_imgbtn_set_src(imgbtn, LV_IMAGEBUTTON_STATE_PRESSED, NULL, &lysbryter_av_150x150 , NULL);
+        lv_obj_set_user_data(imgbtn, &button_size_150);
+    } else {
+        lv_imgbtn_set_src(imgbtn, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &lysbryter_paa_200x200, NULL);
+        lv_imgbtn_set_src(imgbtn, LV_IMAGEBUTTON_STATE_PRESSED, NULL, &lysbryter_av_200x200, NULL);
+        lv_obj_set_user_data(imgbtn, &button_size_200);
+    }
+
+
+    if ( text != NULL )  {
+        //height = lv_obj_get_content_height()
+        //width = lv_obj_get_content_width()
+        lv_obj_t * label = lv_label_create(imgbtn);
+        lv_label_set_text(label, text);
+        lv_obj_align(label, LV_ALIGN_CENTER, 0 , -30);
+    }
+    
+    lv_obj_add_event_cb(imgbtn, homey_light_switch_event_cb, LV_EVENT_VALUE_CHANGED, NULL);
+    //lv_obj_align(imgbtn1, LV_ALIGN_CENTER, 0, 0);
+    return imgbtn;
 }

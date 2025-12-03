@@ -9,6 +9,6 @@
 
 
 //Flush callback
-void my_driver_init(void);
+void my_lv_and_driver_init(void);
 void my_disp_flush(lv_display_t *disp, const lv_area_t *area, uint8_t *px_map);
 void my_touchpad_read( lv_indev_t * indev_driver, lv_indev_data_t * data );
