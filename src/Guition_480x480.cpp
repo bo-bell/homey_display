@@ -10,7 +10,7 @@ static LGFX gfx; /*Use the default LovyanGFX display class instance*/
 static lv_color_t buf1[screenWidth * 10];
 static lv_draw_buf_t draw_buf1[screenWidth * 10]; //
 
-void my_lv_and_driver_init(void)
+void my_lv_and_driver_init(bool use_bg_image)
 {
     gfx.init();
     lv_init();
@@ -20,8 +20,10 @@ void my_lv_and_driver_init(void)
     lv_display_set_buffers(disp, &draw_buf1, NULL, sizeof(draw_buf1), LV_DISPLAY_RENDER_MODE_PARTIAL);
 
     lv_obj_t * screen = lv_scr_act();
-    lv_obj_t * img = lv_img_create(screen);
-    lv_img_set_src(img, &background_image);
+    if (use_bg_image) {
+        lv_obj_t * img = lv_img_create(screen);
+        lv_img_set_src(img, &background_image);
+    }
     //lv_img_set_src(img, &lysbryter_paa);
     Serial.println("Display created and flush cb set");
 
@@ -55,6 +57,6 @@ void my_touchpad_read( lv_indev_t * indev_driver, lv_indev_data_t * data )
         /*Set the coordinates*/
         data->point.x = touchX;
         data->point.y = touchY;
-        Serial.printf("Touch at %d,%d\n", touchX, touchY);
+        // Serial.printf("Touch at %d,%d\n", touchX, touchY);
     }
 }

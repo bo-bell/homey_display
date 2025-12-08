@@ -1,6 +1,7 @@
 #include <lvgl.h>
 #include "homey_widgets.h"
 #include "background_image.h"
+#include <Arduino.h>
 
 
 
@@ -63,7 +64,9 @@ void homey_styles_init(void)
 lv_obj_t * homey_button_create(lv_obj_t * parent, const char * text, lv_obj_flag_t flags = DEFAULT_LV_OBJ_FLAG , uint16_t height = -1, uint16_t width = -1)
 {
     lv_obj_t * btn = lv_button_create(parent);
-    if ( flags != DEFAULT_LV_OBJ_FLAG )  lv_obj_add_flag(btn, flags);
+    if ( flags != DEFAULT_LV_OBJ_FLAG )  lv_obj_add_flag(btn, flags );
+    lv_obj_add_flag(btn, LV_OBJ_FLAG_GESTURE_BUBBLE);
+    lv_obj_add_flag(btn, LV_OBJ_FLAG_EVENT_BUBBLE);
 
 
     /*
@@ -87,6 +90,13 @@ void homey_light_switch_event_cb(lv_event_t * e)
     lv_obj_t * obj = (lv_obj_t*) lv_event_get_target(e);
     lv_event_code_t code = lv_event_get_code(e);
     uint16_t * btn_size = (uint16_t *) lv_obj_get_user_data(obj);
+
+    if      ( code == LV_EVENT_CLICKED)       Serial.println("Homey_light_switch : CLICKED");
+    else if ( code == LV_EVENT_PRESS_LOST)    Serial.println("Homey_light_switch : PRESS_LOST");
+    else if ( code == LV_EVENT_RELEASED)      Serial.println("Homey_light_switch : RELEAST");
+    else if ( code == LV_EVENT_GESTURE)       Serial.println("Homey_light_switch : GESTURE");
+    else if ( code == LV_EVENT_VALUE_CHANGED) Serial.println("Homey_light_switch : VALUE_CHANGED");
+    
  
     if( lv_obj_has_state(obj, LV_STATE_CHECKED) ) {
         if ( *btn_size == 100 ) {
@@ -109,6 +119,10 @@ void homey_light_switch_event_cb(lv_event_t * e)
             lv_imgbtn_set_src(obj, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &lysbryter_av_200x200, NULL);
         }       
     }
+
+    if ( code == LV_EVENT_RELEASED) {
+
+    }
 }
 
 static uint16_t button_size_100 = 100;
@@ -124,6 +138,9 @@ lv_obj_t *  homey_light_switch(lv_obj_t * parent, const char * text, lv_obj_flag
 
     lv_obj_t * imgbtn = lv_imgbtn_create(parent);
     lv_obj_add_flag(imgbtn, LV_OBJ_FLAG_CHECKABLE);
+    lv_obj_add_flag(imgbtn, LV_OBJ_FLAG_GESTURE_BUBBLE);
+    lv_obj_add_flag(imgbtn, LV_OBJ_FLAG_EVENT_BUBBLE);
+
     if ( size == 400 ) {
         lv_imgbtn_set_src(imgbtn, LV_IMAGEBUTTON_STATE_RELEASED, NULL, &lysbryter_paa_400x400, NULL);
         lv_imgbtn_set_src(imgbtn, LV_IMAGEBUTTON_STATE_PRESSED, NULL, &lysbryter_av_400x400 , NULL);
@@ -152,7 +169,13 @@ lv_obj_t *  homey_light_switch(lv_obj_t * parent, const char * text, lv_obj_flag
         lv_obj_align(label, LV_ALIGN_CENTER, 0 , -30);
     }
     
+    //lv_obj_add_event_cb(imgbtn, homey_light_switch_event_cb, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(imgbtn, homey_light_switch_event_cb, LV_EVENT_CLICKED, NULL);
+    lv_obj_add_event_cb(imgbtn, homey_light_switch_event_cb, LV_EVENT_PRESS_LOST, NULL);
+    lv_obj_add_event_cb(imgbtn, homey_light_switch_event_cb, LV_EVENT_RELEASED, NULL);
+    lv_obj_add_event_cb(imgbtn, homey_light_switch_event_cb, LV_EVENT_GESTURE, NULL);
     lv_obj_add_event_cb(imgbtn, homey_light_switch_event_cb, LV_EVENT_VALUE_CHANGED, NULL);
+
     //lv_obj_align(imgbtn1, LV_ALIGN_CENTER, 0, 0);
     return imgbtn;
 }
