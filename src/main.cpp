@@ -7,6 +7,7 @@
 #include <ArduinoJson.h>
 #include "Guition_480x480_driver.h"
 #include "homey_widgets.h"
+#include "homey_styles.h"
 
 
 static lv_obj_t * panel_main;
@@ -98,7 +99,7 @@ static void gesture_event_cb(lv_event_t * e)
                 Serial.println("Gesture: Bottom");
                 break;
             case LV_DIR_LEFT:
-                lv_obj_set_style_bg_color(lv_screen_active(), lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+                //lv_obj_set_style_bg_color(lv_screen_active(), lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
                 //lv_obj_clear_flag(panel_main, LV_OBJ_FLAG_HIDDEN);
                 //lv_obj_clear_state(panel_main, LV_STATE_DISABLED);
                 if (! gesture_guard.gesture_handled ) { 
@@ -109,7 +110,7 @@ static void gesture_event_cb(lv_event_t * e)
                 break;
 
             case LV_DIR_RIGHT: 
-                lv_obj_set_style_bg_color(lv_screen_active(), lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
+                //lv_obj_set_style_bg_color(lv_screen_active(), lv_color_hex(0x00FF00), LV_PART_MAIN | LV_STATE_DEFAULT);
                 //lv_obj_add_flag(panel_main, LV_OBJ_FLAG_HIDDEN);
                 //lv_obj_add_state(panel_main, LV_STATE_DISABLED);
                 if (! gesture_guard.gesture_handled ) { 
@@ -143,18 +144,18 @@ void overlay_show_gesture_only(void) {
     
     //lv_obj_add_event_cb(overlay, gesture_event_cb, LV_EVENT_ALL,NULL);
 
-    lv_obj_add_event_cb(overlay, gesture_event_cb, LV_EVENT_GESTURE,NULL);
-    lv_obj_add_event_cb(overlay, gesture_event_cb, LV_EVENT_PRESS_LOST, NULL);
-    lv_obj_add_event_cb(overlay, gesture_event_cb, LV_EVENT_RELEASED, NULL);
-    lv_obj_add_event_cb(overlay, gesture_event_cb, LV_EVENT_PRESSED, NULL);
-    lv_obj_add_event_cb(overlay, gesture_event_cb, LV_EVENT_CLICKED, NULL); 
+    //lv_obj_add_event_cb(overlay, gesture_event_cb, LV_EVENT_GESTURE,NULL);
+    //lv_obj_add_event_cb(overlay, gesture_event_cb, LV_EVENT_PRESS_LOST, NULL);
+    //lv_obj_add_event_cb(overlay, gesture_event_cb, LV_EVENT_RELEASED, NULL);
+    //lv_obj_add_event_cb(overlay, gesture_event_cb, LV_EVENT_PRESSED, NULL);
+    //lv_obj_add_event_cb(overlay, gesture_event_cb, LV_EVENT_CLICKED, NULL); 
 
-    lv_obj_add_event_cb(lv_layer_top(),event_handler,LV_EVENT_ALL,NULL);
-    lv_obj_add_flag(lv_layer_top(),LV_OBJ_FLAG_EVENT_BUBBLE);
-    lv_obj_remove_flag(lv_layer_top(), LV_OBJ_FLAG_CLICKABLE);
-    Serial.println("top layer flags:");
-    print_flags(lv_layer_top());
-    Serial.println("-------------");
+    //lv_obj_add_event_cb(lv_layer_top(),event_handler,LV_EVENT_ALL,NULL);
+    //lv_obj_add_flag(lv_layer_top(),LV_OBJ_FLAG_EVENT_BUBBLE);
+    //lv_obj_remove_flag(lv_layer_top(), LV_OBJ_FLAG_CLICKABLE);
+    //Serial.println("top layer flags:");
+    //print_flags(lv_layer_top());
+    //Serial.println("-------------");
 }
     
 
@@ -172,6 +173,9 @@ void init_test_screen( lv_obj_t * parent)
 
     // Create conatainers
     lv_obj_t * panel_main = lv_obj_create(parent);
+    lv_obj_remove_style_all(panel_main);
+    lv_obj_add_style(panel_main, &homey_panel_style, LV_PART_MAIN);
+    
     lv_obj_set_size(panel_main, parent_width, container_height);
     lv_obj_align(panel_main, LV_ALIGN_TOP_LEFT,  0, 0);
     lv_obj_add_flag(panel_main,LV_OBJ_FLAG_EVENT_BUBBLE);
@@ -179,7 +183,11 @@ void init_test_screen( lv_obj_t * parent)
     lv_obj_remove_flag(panel_main,LV_OBJ_FLAG_CLICKABLE);
     lv_obj_remove_flag(panel_main,LV_OBJ_FLAG_SCROLLABLE);
 
+
     lv_obj_t * panel_pageing = lv_obj_create(parent);
+    lv_obj_remove_style_all(panel_pageing);
+    lv_obj_add_style(panel_pageing, &homey_panel_style, LV_PART_MAIN);
+
     lv_obj_set_size(panel_pageing, parent_width, pageing_panel_height);
     lv_obj_align(panel_pageing, LV_ALIGN_BOTTOM_LEFT, 0, 0); 
     lv_obj_add_flag(panel_pageing,LV_OBJ_FLAG_EVENT_BUBBLE);
@@ -210,7 +218,7 @@ void init_test_screen( lv_obj_t * parent)
   */
 
 
-    lv_obj_t * btn1 = homey_light_switch(panel_main, "Toggle", LV_OBJ_FLAG_CHECKABLE, 400);
+    lv_obj_t * btn1 = homey_light_switch2(panel_main, "Toggle", LV_OBJ_FLAG_CHECKABLE, 350,350);
     lv_obj_add_event_cb(btn1, event_handler, LV_EVENT_ALL, NULL);
     lv_obj_align(btn1, LV_ALIGN_CENTER, 0, 0);
 
@@ -218,9 +226,9 @@ void init_test_screen( lv_obj_t * parent)
     //swipe
     //overlay_show_gesture_only();
     
-    lv_obj_add_event_cb(parent, gesture_event_cb, LV_EVENT_GESTURE, NULL);
-    lv_obj_add_event_cb(parent, gesture_event_cb, LV_EVENT_PRESS_LOST, NULL);
-    lv_obj_add_event_cb(parent, gesture_event_cb, LV_EVENT_RELEASED, NULL);
+    //lv_obj_add_event_cb(parent, gesture_event_cb, LV_EVENT_GESTURE, NULL);
+    //lv_obj_add_event_cb(parent, gesture_event_cb, LV_EVENT_PRESS_LOST, NULL);
+    //lv_obj_add_event_cb(parent, gesture_event_cb, LV_EVENT_RELEASED, NULL);
 
 }
 
