@@ -172,28 +172,10 @@ void init_test_screen( lv_obj_t * parent)
     lv_obj_clean(parent);
 
     // Create conatainers
-    lv_obj_t * panel_main = lv_obj_create(parent);
-    lv_obj_remove_style_all(panel_main);
-    lv_obj_add_style(panel_main, &homey_panel_style, LV_PART_MAIN);
+    lv_obj_t * panel_main = homey_panel(parent, parent_width, container_height, LV_ALIGN_TOP_LEFT, 0, 0);
+    lv_obj_t * panel_pageing = homey_panel(parent, parent_width, pageing_panel_height, LV_ALIGN_BOTTOM_LEFT, 0, 0);
     
-    lv_obj_set_size(panel_main, parent_width, container_height);
-    lv_obj_align(panel_main, LV_ALIGN_TOP_LEFT,  0, 0);
-    lv_obj_add_flag(panel_main,LV_OBJ_FLAG_EVENT_BUBBLE);
-    lv_obj_add_flag(panel_main,LV_OBJ_FLAG_GESTURE_BUBBLE);
-    lv_obj_remove_flag(panel_main,LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_remove_flag(panel_main,LV_OBJ_FLAG_SCROLLABLE);
 
-
-    lv_obj_t * panel_pageing = lv_obj_create(parent);
-    lv_obj_remove_style_all(panel_pageing);
-    lv_obj_add_style(panel_pageing, &homey_panel_style, LV_PART_MAIN);
-
-    lv_obj_set_size(panel_pageing, parent_width, pageing_panel_height);
-    lv_obj_align(panel_pageing, LV_ALIGN_BOTTOM_LEFT, 0, 0); 
-    lv_obj_add_flag(panel_pageing,LV_OBJ_FLAG_EVENT_BUBBLE);
-    lv_obj_add_flag(panel_pageing,LV_OBJ_FLAG_GESTURE_BUBBLE);
-    lv_obj_remove_flag(panel_pageing,LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_remove_flag(panel_main,LV_OBJ_FLAG_SCROLLABLE);
     // Add buttons
 
     /*
@@ -218,7 +200,7 @@ void init_test_screen( lv_obj_t * parent)
   */
 
 
-    lv_obj_t * btn1 = homey_light_switch2(panel_main, "Toggle", LV_OBJ_FLAG_CHECKABLE, 350,350);
+    lv_obj_t * btn1 = homey_light_switch(panel_main, "Toggle", LV_OBJ_FLAG_CHECKABLE, 350,350);
     lv_obj_add_event_cb(btn1, event_handler, LV_EVENT_ALL, NULL);
     lv_obj_align(btn1, LV_ALIGN_CENTER, 0, 0);
 
